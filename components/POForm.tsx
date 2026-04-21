@@ -82,7 +82,7 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                         />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 gap-6">
                         <div className="space-y-2 group/input">
                             <label className="text-[10px] font-black text-tea-800/60 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
                                 <Hash className="w-3 h-3 text-tea-500" /> Invoice Number
@@ -92,17 +92,6 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                                 value={data.invoiceNo}
                                 onChange={(e) => updateField('invoiceNo', e.target.value)}
                                 className="w-full px-5 py-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-8 focus:ring-tea-500/10 focus:border-tea-600 focus:bg-white outline-none transition-all text-tea-950 font-mono font-bold"
-                            />
-                        </div>
-                        <div className="space-y-2 group/input">
-                            <label className="text-[10px] font-black text-tea-800/60 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
-                                <ReceiptText className="w-3 h-3 text-tea-500" /> Tax Rate (%)
-                            </label>
-                            <input
-                                type="number"
-                                value={data.taxRate}
-                                onChange={(e) => updateField('taxRate', parseFloat(e.target.value) || 0)}
-                                className="w-full px-5 py-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-8 focus:ring-tea-500/10 focus:border-tea-600 focus:bg-white outline-none transition-all text-tea-950 font-bold"
                             />
                         </div>
                     </div>
@@ -222,20 +211,11 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                             <Leaf className="w-32 h-32" />
                         </div>
                         <div className="relative z-10 flex flex-col items-end">
-                            <div className="flex items-center justify-between w-full mb-1">
-                                <span className="text-[10px] font-black text-tea-400 uppercase tracking-[0.2em]">Net Subtotal</span>
-                                <span className="text-stone-300 font-mono text-sm font-bold">${subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="flex items-center justify-between w-full mb-4">
-                                <span className="text-[10px] font-black text-tea-400 uppercase tracking-[0.2em]">Estimated Tax</span>
-                                <span className="text-stone-300 font-mono text-sm font-bold">${(subtotal * (data.taxRate / 100)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-                            </div>
-                            <div className="w-full h-px bg-white/10 mb-4"></div>
                             <div className="flex items-center justify-between w-full">
                                 <span className="text-xs font-black text-white uppercase tracking-[0.2em]">Grand Total</span>
                                 <span className="text-3xl font-black tracking-tight text-white font-mono">
                                     <sup className="font-medium text-base text-tea-300 mr-1">$</sup>
-                                    {(subtotal * (1 + data.taxRate / 100)).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                    {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </span>
                             </div>
                         </div>

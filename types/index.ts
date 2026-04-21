@@ -11,5 +11,4 @@ export interface POData {
     date: string;
     time: string;
     items: LineItem[];
-    taxRate: number;
 }

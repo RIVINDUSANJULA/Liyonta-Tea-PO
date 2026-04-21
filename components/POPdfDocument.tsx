@@ -51,9 +51,7 @@ const styles = StyleSheet.create({
 });
 
 export const POPdfDocument = ({ data }: { data: POData }) => {
-    const subtotal = data.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
-    const taxAmount = subtotal * (data.taxRate / 100);
-    const grandTotal = subtotal + taxAmount;
+    const grandTotal = data.items.reduce((acc, item) => acc + (item.qty * item.price), 0);
 
     return (
         <Document>
@@ -110,14 +108,6 @@ export const POPdfDocument = ({ data }: { data: POData }) => {
 
                 {/* Totals */}
                 <View style={styles.summarySection}>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>Subtotal:</Text>
-                        <Text style={styles.summaryValue}>${subtotal.toFixed(2)}</Text>
-                    </View>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>Tax Rate ({data.taxRate}%):</Text>
-                        <Text style={styles.summaryValue}>${taxAmount.toFixed(2)}</Text>
-                    </View>
                     <View style={styles.grandTotalRow}>
                         <Text style={styles.grandTotalLabel}>Grand Total:</Text>
                         <Text style={styles.grandTotalValue}>USD ${(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>

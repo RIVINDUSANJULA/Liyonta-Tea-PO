@@ -38,7 +38,6 @@ export default function PurchaseOrderPage() {
     items: [
       { id: uuidv4(), description: 'Silver Needle', qty: 10, price: 15.00 }
     ],
-    taxRate: 0,
   });
 
   useEffect(() => {
