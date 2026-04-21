@@ -110,7 +110,7 @@ export const POPdfDocument = ({ data }: { data: POData }) => {
                 <View style={styles.summarySection}>
                     <View style={styles.grandTotalRow}>
                         <Text style={styles.grandTotalLabel}>Grand Total:</Text>
-                        <Text style={styles.grandTotalValue}>Rs .{(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+                        <Text style={styles.grandTotalValue}>Rs. {(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
                     </View>
                 </View>
 

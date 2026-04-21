@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Enterprise Application",
-  description: "High-performance web application built with Next.js and Tailwind CSS",
+  title: "Liyonta Tea | Purchase Order",
+  description: "Enterprise Purchase Order Generation System for Liyonta Tea",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
