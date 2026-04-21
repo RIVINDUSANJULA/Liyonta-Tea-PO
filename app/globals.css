@@ -1,6 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-tea-50: #f0fdf4;
+  --color-tea-100: #dcfce7;
+  --color-tea-200: #bbf7d0;
+  --color-tea-300: #86efac;
+  --color-tea-400: #4ade80;
+  --color-tea-500: #22c55e;
+  --color-tea-600: #16a34a;
+  --color-tea-700: #15803d;
+  --color-tea-800: #166534;
+  --color-tea-900: #14532d;
+  --color-tea-950: #052e16;
+
+  --color-ceylon-50: #fffbeb;
+  --color-ceylon-100: #fef3c7;
+  --color-ceylon-200: #fde68a;
+  --color-ceylon-300: #fcd34d;
+  --color-ceylon-400: #fbbf24;
+  --color-ceylon-500: #f59e0b;
+  --color-ceylon-600: #d97706;
+  --color-ceylon-700: #b45309;
+  --color-ceylon-800: #92400e;
+  --color-ceylon-900: #78350f;
+  --color-ceylon-950: #451a03;
+}
+
+@layer base {
+  body {
+    @apply bg-[#FDFBF7] text-stone-900;
+  }
+}
+
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
