@@ -1,3 +1,4 @@
+// src/app/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -5,11 +6,9 @@ import dynamic from 'next/dynamic';
 import { v4 as uuidv4 } from 'uuid';
 import { POData } from '@/types';
 import { POForm } from '@/components/POForm';
-import { Download } from 'lucide-react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import { POPdfDocument } from '@/components/POPdfDocument';
+import { Download } from 'lucide-react'; // Kept for the loading state
 
-// Dynamically import the viewer to prevent Next.js SSR hydration errors with browser APIs
+// 1. Dynamically import the Viewer (Existing)
 const PDFViewerWrapper = dynamic(() => import('@/components/PDFViewerWrapper'), {
   ssr: false,
   loading: () => (
@@ -19,28 +18,34 @@ const PDFViewerWrapper = dynamic(() => import('@/components/PDFViewerWrapper'), 
   ),
 });
 
+// 2. NEW: Dynamically import the Download Button
+const PDFDownloadButtonWrapper = dynamic(() => import('@/components/PDFDownloadButton'), {
+  ssr: false,
+  loading: () => (
+    <button disabled className="flex items-center gap-2 bg-gray-300 text-gray-500 px-5 py-2.5 rounded-lg font-semibold cursor-not-allowed shadow-sm">
+      <Download className="w-5 h-5" />
+      Loading...
+    </button>
+  ),
+});
+
 export default function PurchaseOrderPage() {
   const [poData, setPoData] = useState<POData>({
     customerName: '',
     invoiceNo: `INV-${new Date().getFullYear()}-001`,
-    date: '', // Initialized empty to prevent Next.js hydration errors
-    time: '', // Initialized empty to prevent Next.js hydration errors
+    date: '',
+    time: '',
     items: [
       { id: uuidv4(), description: 'BOPF', qty: 100, price: 4.50 }
     ],
     taxRate: 0,
   });
 
-  // Fetch the current local date and time on component mount
   useEffect(() => {
     const now = new Date();
-
-    // Format YYYY-MM-DD for the date input
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-
-    // Format HH:MM for the time input
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
 
@@ -62,20 +67,8 @@ export default function PurchaseOrderPage() {
             <p className="text-emerald-200 text-sm mt-1">Liyonta Tea Internal Operations Portal</p>
           </div>
 
-          {/* Download Button Component directly linked to the PDF Generator */}
-          <PDFDownloadLink
-            document={<POPdfDocument data={poData} />}
-            fileName={`${poData.invoiceNo || 'PO'}_LiyontaTea.pdf`}
-            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-amber-950 px-5 py-2.5 rounded-lg font-semibold transition shadow-sm"
-          >
-            {/* @ts-ignore - react-pdf types sometimes clash with React 18 children typing */}
-            {({ loading }) => (
-              <>
-                <Download className="w-5 h-5" />
-                {loading ? 'Preparing PDF...' : 'Download PDF'}
-              </>
-            )}
-          </PDFDownloadLink>
+          {/* 3. Use the dynamically imported wrapper instead of the direct link */}
+          <PDFDownloadButtonWrapper data={poData} />
         </header>
 
         {/* Two-Column Layout */}
