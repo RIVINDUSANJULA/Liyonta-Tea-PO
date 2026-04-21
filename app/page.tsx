@@ -104,12 +104,12 @@ export default function PurchaseOrderPage() {
         {/* --- Workspace Layout --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-240px)] min-h-[800px]">
           {/* Left Column: Form Editor */}
-          <div className="lg:col-span-5 overflow-y-auto pr-2 custom-scrollbar pb-8">
+          <div className="lg:col-span-8 overflow-y-auto pr-2 custom-scrollbar pb-8">
             <POForm data={poData} onChange={setPoData} />
           </div>
 
           {/* Right Column: PDF Preview */}
-          <div className="hidden lg:block lg:col-span-7 h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-stone-200/60 overflow-hidden relative group">
+          <div className="hidden lg:block lg:col-span-4 h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-stone-200/60 overflow-hidden relative group">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-tea-600 to-ceylon-500 z-10"></div>
             <PDFViewerWrapper data={poData} />
           </div>
