@@ -19,6 +19,17 @@ const TEA_GRADES = [
     "Silver Tips",
     "English Breakfast",
     "Moroccan Mint"
+]
+const CUSTOMERS = [
+    "Celestial Tea Wholesalers",
+    "Royal Tea Houses Ltd.",
+    "Green Leaf Distribution",
+    "Emerald Brews Co.",
+    "Golden Tips Trading",
+    "International Tea Importers",
+    "Liyonta Tea - Internal",
+    "Silver Needle Boutique",
+    "Mount Fuji Tea Gardens"
 ];
 
 export const POForm = ({ data, onChange }: POFormProps) => {
@@ -73,13 +84,16 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                         <label className="text-[10px] font-black text-tea-800/60 uppercase tracking-[0.2em] ml-1 flex items-center gap-2">
                             <User className="w-3 h-3 text-tea-500" /> Customer / Company Name
                         </label>
-                        <input
-                            type="text"
+                        <select
                             value={data.customerName}
                             onChange={(e) => updateField('customerName', e.target.value)}
-                            className="w-full px-5 py-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-8 focus:ring-tea-500/10 focus:border-tea-600 focus:bg-white outline-none transition-all text-tea-950 font-bold placeholder:text-stone-300 placeholder:font-medium"
-                            placeholder="e.g. Celestial Tea Wholesalers"
-                        />
+                            className="w-full px-5 py-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-8 focus:ring-tea-500/10 focus:border-tea-600 focus:bg-white outline-none transition-all text-tea-950 font-bold cursor-pointer appearance-none shadow-sm"
+                        >
+                            <option value="" disabled>Select a Customer</option>
+                            {CUSTOMERS.map(customer => (
+                                <option key={customer} value={customer}>{customer}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6">
@@ -154,6 +168,7 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                                     onChange={(e) => updateLineItem(item.id, 'description', e.target.value)}
                                     className="w-full px-4 py-3.5 bg-white border border-stone-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-tea-500/10 focus:border-tea-600 transition-all font-bold text-tea-950 cursor-pointer appearance-none shadow-sm"
                                 >
+                                    <option value="" disabled>Select the Product</option>
                                     {TEA_GRADES.map(grade => <option key={grade} value={grade}>{grade}</option>)}
                                 </select>
                             </div>
