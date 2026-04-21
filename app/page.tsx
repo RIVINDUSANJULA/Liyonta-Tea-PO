@@ -1,7 +1,6 @@
-// src/app/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { v4 as uuidv4 } from 'uuid';
 import { POData } from '@/types';
@@ -24,13 +23,33 @@ export default function PurchaseOrderPage() {
   const [poData, setPoData] = useState<POData>({
     customerName: '',
     invoiceNo: `INV-${new Date().getFullYear()}-001`,
-    date: new Date().toISOString().split('T')[0],
-    time: '09:00',
+    date: '', // Initialized empty to prevent Next.js hydration errors
+    time: '', // Initialized empty to prevent Next.js hydration errors
     items: [
       { id: uuidv4(), description: 'BOPF', qty: 100, price: 4.50 }
     ],
     taxRate: 0,
   });
+
+  // Fetch the current local date and time on component mount
+  useEffect(() => {
+    const now = new Date();
+
+    // Format YYYY-MM-DD for the date input
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    // Format HH:MM for the time input
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+
+    setPoData((prev) => ({
+      ...prev,
+      date: `${year}-${month}-${day}`,
+      time: `${hours}:${minutes}`
+    }));
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans">
