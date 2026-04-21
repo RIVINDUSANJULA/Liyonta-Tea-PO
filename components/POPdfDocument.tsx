@@ -100,8 +100,8 @@ export const POPdfDocument = ({ data }: { data: POData }) => {
                         <View key={item.id} style={styles.tableRow}>
                             <Text style={styles.colDesc}>{item.description || '—'}</Text>
                             <Text style={styles.colQty}>{item.qty}</Text>
-                            <Text style={styles.colPrice}>${item.price.toFixed(2)}</Text>
-                            <Text style={styles.colTotal}>${(item.qty * item.price).toFixed(2)}</Text>
+                            <Text style={styles.colPrice}>Rs.{item.price.toFixed(2)}</Text>
+                            <Text style={styles.colTotal}>Rs.{(item.qty * item.price).toFixed(2)}</Text>
                         </View>
                     ))}
                 </View>
@@ -110,7 +110,7 @@ export const POPdfDocument = ({ data }: { data: POData }) => {
                 <View style={styles.summarySection}>
                     <View style={styles.grandTotalRow}>
                         <Text style={styles.grandTotalLabel}>Grand Total:</Text>
-                        <Text style={styles.grandTotalValue}>USD ${(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+                        <Text style={styles.grandTotalValue}>Rs .{(grandTotal).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
                     </View>
                 </View>
 

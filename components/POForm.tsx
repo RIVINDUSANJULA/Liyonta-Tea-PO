@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Trash2, CalendarDays, Clock3, Building, Hash, DollarSign, Leaf, User, ReceiptText, Sparkles } from 'lucide-react';
+import { Plus, Trash2, CalendarDays, Clock3, Building, Hash, DollarSign, Leaf, User, ReceiptText } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { POData } from '@/types';
 
@@ -158,33 +158,48 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                                 </select>
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1 text-center">Qty (kg)</label>
-                                <input
-                                    type="number" min="1" step="0.5"
-                                    value={item.qty}
-                                    onChange={(e) => updateLineItem(item.id, 'qty', parseFloat(e.target.value) || 0)}
-                                    className="w-full px-4 py-3.5 bg-white border border-stone-200 rounded-2xl text-sm text-center outline-none focus:ring-4 focus:ring-tea-500/10 focus:border-tea-600 transition-all font-bold text-tea-950 shadow-sm"
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="block text-[10px] font-black text-stone-400 uppercase tracking-widest ml-1">Unit Price ($)</label>
-                                <div className="relative">
-                                    <DollarSign className="w-4 h-4 text-stone-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                            <div className="flex gap-4">
+                                {/* Quantity Field */}
+                                <div className="flex-1 space-y-1.5">
+                                    <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider ml-1">
+                                        Qty (kg)
+                                    </label>
                                     <input
-                                        type="number" min="0" step="0.01"
-                                        value={item.price}
-                                        onChange={(e) => updateLineItem(item.id, 'price', parseFloat(e.target.value) || 0)}
-                                        className="w-full px-4 py-3.5 pl-10 bg-white border border-stone-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-tea-500/10 focus:border-tea-600 transition-all font-mono font-bold text-tea-950 shadow-sm"
+                                        type="number"
+                                        min="1"
+                                        step="0.5"
+                                        value={item.qty}
+                                        onChange={(e) => updateLineItem(item.id, 'qty', parseFloat(e.target.value) || 0)}
+                                        className="w-full px-4 py-3 bg-white border border-stone-200 rounded-xl text-sm font-semibold text-stone-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-200 shadow-sm"
                                     />
+                                </div>
+
+                                {/* Unit Price Field */}
+                                <div className="flex-1 space-y-1.5">
+                                    <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider ml-1">
+                                        Unit Price
+                                    </label>
+                                    <div className="relative group">
+                                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 font-mono pointer-events-none group-focus-within:text-teal-600 transition-colors">
+                                            Rs.
+                                        </span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            value={item.price}
+                                            onChange={(e) => updateLineItem(item.id, 'price', parseFloat(e.target.value) || 0)}
+                                            className="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 rounded-xl text-sm font-semibold font-mono text-stone-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-200 shadow-sm placeholder:text-stone-300"
+                                            placeholder="0.00"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="flex items-center gap-4 mt-2 md:mt-0 md:pt-6">
                                 <div className="flex-1 md:flex-none text-right px-6 py-3.5 bg-tea-50 border border-tea-100/50 rounded-2xl">
                                     <span className="font-mono font-black text-tea-900 text-lg tracking-tighter">
-                                        <sup className="font-semibold text-xs opacity-50 mr-1">$</sup>
+                                        <sup className="font-semibold text-xs opacity-50 mr-1">Rs. </sup>
                                         {(item.qty * item.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                     </span>
                                 </div>
@@ -201,20 +216,23 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                 </div>
 
                 {/* --- Summary --- */}
-                <div className="mt-12 pt-8 border-t border-tea-50 flex items-center justify-between">
-                    <div className="hidden md:flex items-center gap-4 text-stone-300">
-                        <Sparkles className="w-6 h-6 animate-pulse" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest">Calculated in real-time</span>
-                    </div>
-                    <div className="bg-tea-950 px-8 py-6 rounded-[2rem] w-full md:w-auto min-w-[320px] shadow-2xl shadow-tea-950/40 relative overflow-hidden group/sub">
-                        <div className="absolute -right-8 -bottom-8 text-white/5 transition-transform group-hover/sub:scale-110 duration-700">
+                <div className="mt-12 pt-8 border-t border-stone-100 flex justify-end">
+                    <div className="bg-teal-950 px-8 py-6 rounded-3xl w-full md:w-80 shadow-xl shadow-teal-950/20 relative overflow-hidden group/sub transition-all hover:shadow-2xl">
+
+                        {/* Decorative Leaf Icon */}
+                        <div className="absolute -right-6 -bottom-6 text-white/[0.03] transition-transform duration-700 group-hover/sub:scale-110 rotate-12">
                             <Leaf className="w-32 h-32" />
                         </div>
-                        <div className="relative z-10 flex flex-col items-end">
-                            <div className="flex items-center justify-between w-full">
-                                <span className="text-xs font-black text-white uppercase tracking-[0.2em]">Grand Total</span>
-                                <span className="text-3xl font-black tracking-tight text-white font-mono">
-                                    <sup className="font-medium text-base text-tea-300 mr-1">$</sup>
+
+                        {/* Content */}
+                        <div className="relative z-10 space-y-1">
+                            <p className="text-[10px] font-bold text-teal-300 uppercase tracking-[0.25em]">
+                                Grand Total
+                            </p>
+
+                            <div className="flex items-baseline justify-between">
+                                <span className="text-sm text-teal-200 font-medium">LKR</span>
+                                <span className="text-3xl font-extrabold tracking-tight text-white font-mono">
                                     {subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </span>
                             </div>
