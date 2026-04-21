@@ -1,42 +1,34 @@
-// src/app/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { v4 as uuidv4 } from 'uuid';
-import { POData } from '@/types';
-import { POForm } from '@/components/POForm';
-import { Download } from 'lucide-react'; // Kept for the loading state
+import { Download, Leaf } from 'lucide-react';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 
-// 1. Dynamically import the Viewer (Existing)
+// Assuming you have these components/types in your project
+import { POForm } from '@/components/POForm';
+import { POPdfDocument } from '@/components/POPdfDocument';
+import { POData } from '@/types';
+
 const PDFViewerWrapper = dynamic(() => import('@/components/PDFViewerWrapper'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl border border-gray-200">
-      <p className="text-emerald-700 animate-pulse font-medium">Initializing Document Preview...</p>
+    <div className="w-full h-full flex flex-col items-center justify-center bg-stone-50/50 rounded-3xl border border-stone-200/50 backdrop-blur-sm">
+      <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-700 rounded-full animate-spin mb-4"></div>
+      <p className="text-emerald-800 font-medium tracking-wide">Initializing Preview...</p>
     </div>
-  ),
-});
-
-// 2. NEW: Dynamically import the Download Button
-const PDFDownloadButtonWrapper = dynamic(() => import('@/components/PDFDownloadButton'), {
-  ssr: false,
-  loading: () => (
-    <button disabled className="flex items-center gap-2 bg-gray-300 text-gray-500 px-5 py-2.5 rounded-lg font-semibold cursor-not-allowed shadow-sm">
-      <Download className="w-5 h-5" />
-      Loading...
-    </button>
   ),
 });
 
 export default function PurchaseOrderPage() {
   const [poData, setPoData] = useState<POData>({
     customerName: '',
-    invoiceNo: `INV-${new Date().getFullYear()}-001`,
+    invoiceNo: `TEA-INV-${new Date().getFullYear()}-001`,
     date: '',
     time: '',
     items: [
-      { id: uuidv4(), description: 'BOPF', qty: 100, price: 4.50 }
+      { id: uuidv4(), description: 'Silver Needle', qty: 10, price: 15.00 }
     ],
     taxRate: 0,
   });
@@ -57,29 +49,53 @@ export default function PurchaseOrderPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <main className="min-h-screen bg-[#FDFBF7] p-4 md:p-6 lg:p-8 font-sans selection:bg-emerald-200 selection:text-emerald-900">
+      <div className="max-w-[1600px] mx-auto space-y-8">
 
-        {/* Header */}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-emerald-800 p-6 rounded-2xl shadow-md text-white">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Purchase Order Generator</h1>
-            <p className="text-emerald-200 text-sm mt-1">Liyonta Tea Internal Operations Portal</p>
+        {/* --- Premium Header --- */}
+        <header className="relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-emerald-950 p-8 rounded-3xl shadow-2xl shadow-emerald-900/20 text-white border border-emerald-800/50">
+          <div className="absolute top-0 right-0 -mt-16 -mr-16 text-emerald-800/30">
+            <Leaf className="w-64 h-64 rotate-12" />
           </div>
 
-          {/* 3. Use the dynamically imported wrapper instead of the direct link */}
-          <PDFDownloadButtonWrapper data={poData} />
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="px-3 py-1 bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-widest rounded-full border border-amber-500/30">
+                Internal Operations
+              </span>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-stone-50">
+              Liyonta <span className="text-emerald-400 font-light">Tea</span>
+            </h1>
+            <p className="text-emerald-200/80 text-sm mt-2 font-medium tracking-wide">
+              Purchase Order Generator & Preview
+            </p>
+          </div>
+
+          <PDFDownloadLink
+            document={<POPdfDocument data={poData} />}
+            fileName={`${poData.invoiceNo || 'PO'}_LiyontaTea.pdf`}
+            className="relative z-10 group flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-amber-950 px-6 py-3.5 rounded-xl font-bold transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.3)] hover:shadow-[0_0_25px_rgba(245,158,11,0.5)] active:scale-95"
+          >
+            {/* @ts-ignore */}
+            {({ loading }) => (
+              <>
+                <Download className="w-5 h-5 transition-transform group-hover:-translate-y-0.5" />
+                {loading ? 'Preparing Document...' : 'Download PDF'}
+              </>
+            )}
+          </PDFDownloadLink>
         </header>
 
-        {/* Two-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-200px)] min-h-[800px]">
-          {/* Left Column: Editor */}
-          <div className="overflow-y-auto pr-2 custom-scrollbar">
+        {/* --- Split Layout --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-240px)] min-h-[800px]">
+          {/* Left Column: Form Editor (Takes up 5 columns on large screens) */}
+          <div className="lg:col-span-5 overflow-y-auto pr-2 custom-scrollbar pb-8">
             <POForm data={poData} onChange={setPoData} />
           </div>
 
-          {/* Right Column: Real-Time Preview */}
-          <div className="h-full hidden lg:block">
+          {/* Right Column: PDF Preview (Takes up 7 columns on large screens) */}
+          <div className="hidden lg:block lg:col-span-7 h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-200 overflow-hidden">
             <PDFViewerWrapper data={poData} />
           </div>
         </div>
