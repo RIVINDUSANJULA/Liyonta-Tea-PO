@@ -40,6 +40,18 @@ export default function PurchaseOrderPage() {
     ],
   });
 
+  const [debouncedPoData, setDebouncedPoData] = useState<POData>(poData);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedPoData(poData);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [poData]);
+
   useEffect(() => {
     const now = new Date();
     const year = now.getFullYear();
@@ -102,7 +114,7 @@ export default function PurchaseOrderPage() {
           {/* Right Column: PDF Preview */}
           <div className="hidden lg:block lg:col-span-4 h-full bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-stone-200/60 overflow-hidden relative group">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-tea-600 to-ceylon-500 z-10"></div>
-            <PDFViewerWrapper data={poData} />
+            <PDFViewerWrapper data={debouncedPoData} />
           </div>
         </div>
 
