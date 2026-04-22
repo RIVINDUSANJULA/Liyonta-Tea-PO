@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 
-// --- GET ALL DATA ---
+// GET ALL DATA
 router.get('/', async (req, res) => {
     try {
         const [customersRows] = await pool.query('SELECT name FROM customers ORDER BY name ASC');
@@ -18,8 +18,10 @@ router.get('/', async (req, res) => {
     }
 });
 
-// --- CUSTOMERS ---
+// POST: Add a new Customer
 router.post('/customers', async (req, res) => {
+    if (!req.body) return res.status(400).json({ error: 'Request body missing. Check express.json() in server.js' });
+
     const { name } = req.body;
     if (!name || name.trim() === '') return res.status(400).json({ error: 'Customer name is required' });
 
@@ -28,21 +30,31 @@ router.post('/customers', async (req, res) => {
         res.status(201).json({ message: 'Customer added successfully' });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Customer already exists' });
+        console.error('Insert error:', error);
         res.status(500).json({ error: 'Failed to add customer' });
     }
 });
 
+// DELETE: Remove a Customer
 router.delete('/customers/:name', async (req, res) => {
     try {
-        await pool.query('DELETE FROM customers WHERE name = ?', [req.params.name]);
-        res.status(200).json({ message: 'Customer deleted' });
+        const [result] = await pool.query('DELETE FROM customers WHERE name = ?', [req.params.name.trim()]);
+
+        // Ensure MySQL actually found and deleted the row
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Customer not found in database. It may contain hidden spaces.' });
+        }
+        res.status(200).json({ message: 'Customer deleted successfully' });
     } catch (error) {
+        console.error('Delete error:', error);
         res.status(500).json({ error: 'Failed to delete customer' });
     }
 });
 
-// --- TEA GRADES ---
+// POST: Add a Tea Grade
 router.post('/tea-grades', async (req, res) => {
+    if (!req.body) return res.status(400).json({ error: 'Request body missing.' });
+
     const { name } = req.body;
     if (!name || name.trim() === '') return res.status(400).json({ error: 'Tea grade is required' });
 
@@ -51,15 +63,22 @@ router.post('/tea-grades', async (req, res) => {
         res.status(201).json({ message: 'Tea grade added successfully' });
     } catch (error) {
         if (error.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Tea grade already exists' });
+        console.error('Insert error:', error);
         res.status(500).json({ error: 'Failed to add tea grade' });
     }
 });
 
+// DELETE: Remove a Tea Grade
 router.delete('/tea-grades/:name', async (req, res) => {
     try {
-        await pool.query('DELETE FROM tea_grades WHERE name = ?', [req.params.name]);
-        res.status(200).json({ message: 'Tea grade deleted' });
+        const [result] = await pool.query('DELETE FROM tea_grades WHERE name = ?', [req.params.name.trim()]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Tea grade not found in database.' });
+        }
+        res.status(200).json({ message: 'Tea grade deleted successfully' });
     } catch (error) {
+        console.error('Delete error:', error);
         res.status(500).json({ error: 'Failed to delete tea grade' });
     }
 });
