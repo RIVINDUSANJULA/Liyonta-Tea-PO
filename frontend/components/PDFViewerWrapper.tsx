@@ -1,3 +1,17 @@
+/**
+ * @file page.tsx
+ * @copyright 2026 Rivindu Sanjula. All Rights Reserved.
+ * @license Proprietary Commercial Software
+ * * Prepared exclusively for Liyonta Tea.
+ * This software is provided under a commercial agreement. The source code, 
+ * database schemas, and proprietary business logic contained within this 
+ * file are the confidential and proprietary information of Liyonta Tea 
+ * and its authorized developers.
+ * * Unauthorized copying, distribution, or modification of this codebase, 
+ * via any medium, is strictly prohibited. This is closed-source software. 
+ * No open-source license is granted.
+ */
+
 'use client';
 
 import { usePDF } from '@react-pdf/renderer';
@@ -24,14 +38,14 @@ export default function PDFViewerWrapper({ data }: { data: POData }) {
     if (instance.error) {
         return (
             <div className="w-full h-full flex items-center justify-center text-red-500 text-xs font-bold px-8 text-center leading-relaxed">
-                Failed to update tea preview.<br/>Please check your inputs.
+                Failed to update tea preview.<br />Please check your inputs.
             </div>
         );
     }
 
     return (
-        <iframe 
-            src={`${instance.url}#toolbar=0&navpanes=0&view=FitH`} 
+        <iframe
+            src={`${instance.url}#toolbar=0&navpanes=0&view=FitH`}
             className="w-full h-full border-none"
             title="PDF Preview"
         />
