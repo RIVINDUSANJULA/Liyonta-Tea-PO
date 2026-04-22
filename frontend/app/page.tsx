@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { v4 as uuidv4 } from 'uuid';
-import { Leaf, FileText, Sparkles } from 'lucide-react';
+import { Leaf, Sparkles } from 'lucide-react';
 
 import { POForm } from '@/components/POForm';
 import { POData } from '@/types';
@@ -36,12 +36,42 @@ export default function PurchaseOrderPage() {
     date: '',
     time: '',
     items: [
-      { id: uuidv4(), description: 'Silver Needle', qty: 10, price: 15.00 }
+      { id: uuidv4(), description: '', qty: 10, price: 15.00 }
     ],
   });
 
   const [debouncedPoData, setDebouncedPoData] = useState<POData>(poData);
 
+  // NEW: State to hold your MySQL Database Data
+  const [dbCustomers, setDbCustomers] = useState<string[]>([]);
+  const [dbTeaGrades, setDbTeaGrades] = useState<string[]>([]);
+
+  // NEW: Fetch Data from Express Backend
+  useEffect(() => {
+    const fetchReferenceData = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/reference-data');
+        if (response.ok) {
+          const data = await response.json();
+          setDbCustomers(data.customers);
+          setDbTeaGrades(data.teaGrades);
+
+          // Set the first tea grade as default for the initial item once data loads
+          if (data.teaGrades.length > 0 && poData.items[0].description === '') {
+            setPoData(prev => ({
+              ...prev,
+              items: [{ ...prev.items[0], description: data.teaGrades[0] }]
+            }));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch from Express Backend:", error);
+      }
+    };
+    fetchReferenceData();
+  }, []);
+
+  // Debounce effect for PDF rendering performance
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedPoData(poData);
@@ -52,6 +82,7 @@ export default function PurchaseOrderPage() {
     };
   }, [poData]);
 
+  // Set initial date and time
   useEffect(() => {
     const now = new Date();
     const year = now.getFullYear();
@@ -74,7 +105,6 @@ export default function PurchaseOrderPage() {
         {/* --- Premium Tea Header --- */}
         <header className="relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-gradient-to-br from-tea-950 via-tea-900 to-emerald-900 p-8 rounded-[2rem] shadow-2xl shadow-tea-900/40 border border-tea-800/50">
 
-          {/* Decorative Background Patterns */}
           <div className="absolute top-0 right-0 -mt-20 -mr-20 text-tea-400/10 pointer-events-none transform rotate-12">
             <Leaf className="w-80 h-80" />
           </div>
@@ -108,7 +138,13 @@ export default function PurchaseOrderPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-240px)] min-h-[800px]">
           {/* Left Column: Form Editor */}
           <div className="lg:col-span-8 overflow-y-auto pr-2 custom-scrollbar pb-8">
-            <POForm data={poData} onChange={setPoData} />
+            {/* NEW: Passing down the database arrays as props */}
+            <POForm
+              data={poData}
+              onChange={setPoData}
+              customers={dbCustomers}
+              teaGrades={dbTeaGrades}
+            />
           </div>
 
           {/* Right Column: PDF Preview */}

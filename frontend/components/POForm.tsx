@@ -1,38 +1,17 @@
 import React from 'react';
-import { Plus, Trash2, CalendarDays, Clock3, Building, Hash, DollarSign, Leaf, User, ReceiptText } from 'lucide-react';
+import { Plus, Trash2, CalendarDays, Clock3, Building, Hash, User, Leaf } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { POData } from '@/types';
 
+// NEW: Added customers and teaGrades to the interface
 interface POFormProps {
     data: POData;
     onChange: (data: POData) => void;
+    customers: string[];
+    teaGrades: string[];
 }
 
-const TEA_GRADES = [
-    "Silver Needle (White Tea)",
-    "Da Hong Pao (Oolong)",
-    "Matcha (Ceremonial Grade)",
-    "Dragonwell (Green Tea)",
-    "Earl Grey (Boutique Special)",
-    "BOPF (Ceylon Premium)",
-    "Pekoe (Ceylon Golden)",
-    "Silver Tips",
-    "English Breakfast",
-    "Moroccan Mint"
-]
-const CUSTOMERS = [
-    "Celestial Tea Wholesalers",
-    "Royal Tea Houses Ltd.",
-    "Green Leaf Distribution",
-    "Emerald Brews Co.",
-    "Golden Tips Trading",
-    "International Tea Importers",
-    "Liyonta Tea - Internal",
-    "Silver Needle Boutique",
-    "Mount Fuji Tea Gardens"
-];
-
-export const POForm = ({ data, onChange }: POFormProps) => {
+export const POForm = ({ data, onChange, customers, teaGrades }: POFormProps) => {
     const updateField = (field: keyof POData, value: any) => {
         onChange({ ...data, [field]: value });
     };
@@ -40,7 +19,8 @@ export const POForm = ({ data, onChange }: POFormProps) => {
     const addLineItem = () => {
         onChange({
             ...data,
-            items: [...data.items, { id: uuidv4(), description: TEA_GRADES[0], qty: 5, price: 25.00 }]
+            // Uses the first fetched tea grade as the default when adding a new row
+            items: [...data.items, { id: uuidv4(), description: teaGrades[0] || '', qty: 5, price: 25.00 }]
         });
     };
 
@@ -64,7 +44,6 @@ export const POForm = ({ data, onChange }: POFormProps) => {
 
     return (
         <div className="space-y-8 pb-12">
-
             {/* --- Metadata Card --- */}
             <div className="bg-white p-8 rounded-[2rem] shadow-xl shadow-tea-900/5 border border-tea-100/40 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-tea-50/50 rounded-bl-[4rem] -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500"></div>
@@ -90,7 +69,8 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                             className="w-full px-5 py-4 bg-stone-50 border border-stone-200 rounded-2xl focus:ring-8 focus:ring-tea-500/10 focus:border-tea-600 focus:bg-white outline-none transition-all text-tea-950 font-bold cursor-pointer appearance-none shadow-sm"
                         >
                             <option value="" disabled>Select a Customer</option>
-                            {CUSTOMERS.map(customer => (
+                            {/* DYNAMIC MYSQL CUSTOMERS LOOP */}
+                            {customers.map(customer => (
                                 <option key={customer} value={customer}>{customer}</option>
                             ))}
                         </select>
@@ -169,12 +149,12 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                                     className="w-full px-4 py-3.5 bg-white border border-stone-200 rounded-2xl text-sm outline-none focus:ring-4 focus:ring-tea-500/10 focus:border-tea-600 transition-all font-bold text-tea-950 cursor-pointer appearance-none shadow-sm"
                                 >
                                     <option value="" disabled>Select the Product</option>
-                                    {TEA_GRADES.map(grade => <option key={grade} value={grade}>{grade}</option>)}
+                                    {/* DYNAMIC MYSQL TEA GRADES LOOP */}
+                                    {teaGrades.map(grade => <option key={grade} value={grade}>{grade}</option>)}
                                 </select>
                             </div>
 
                             <div className="flex gap-4">
-                                {/* Quantity Field */}
                                 <div className="flex-1 space-y-1.5">
                                     <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider ml-1">
                                         Qty (kg)
@@ -189,7 +169,6 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                                     />
                                 </div>
 
-                                {/* Unit Price Field */}
                                 <div className="flex-1 space-y-1.5">
                                     <label className="text-xs font-semibold text-stone-500 uppercase tracking-wider ml-1">
                                         Unit Price
@@ -233,18 +212,13 @@ export const POForm = ({ data, onChange }: POFormProps) => {
                 {/* --- Summary --- */}
                 <div className="mt-12 pt-8 border-t border-stone-100 flex justify-end">
                     <div className="bg-teal-950 px-8 py-6 rounded-3xl w-full md:w-80 shadow-xl shadow-teal-950/20 relative overflow-hidden group/sub transition-all hover:shadow-2xl">
-
-                        {/* Decorative Leaf Icon */}
                         <div className="absolute -right-6 -bottom-6 text-white/[0.03] transition-transform duration-700 group-hover/sub:scale-110 rotate-12">
                             <Leaf className="w-32 h-32" />
                         </div>
-
-                        {/* Content */}
                         <div className="relative z-10 space-y-1">
                             <p className="text-[10px] font-bold text-teal-300 uppercase tracking-[0.25em]">
                                 Grand Total
                             </p>
-
                             <div className="flex items-baseline justify-between">
                                 <span className="text-sm text-teal-200 font-medium">LKR</span>
                                 <span className="text-3xl font-extrabold tracking-tight text-white font-mono">
