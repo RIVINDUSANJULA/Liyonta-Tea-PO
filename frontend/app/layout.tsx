@@ -1,5 +1,5 @@
 /**
- * @file page.tsx
+ * @file layout.tsx
  * @copyright 2026 Rivindu Sanjula. All Rights Reserved.
  * @license Proprietary Commercial Software
  * * Prepared exclusively for Liyonta Tea.
